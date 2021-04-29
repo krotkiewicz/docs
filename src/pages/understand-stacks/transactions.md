@@ -51,6 +51,35 @@ A sample of each transaction type can be found in the [Stacks Blockchain API res
 
 ~> Read-only contract call calls do **not** require transactions. Read more about it in the [network guide](/understand-stacks/network#read-only-function-calls).
 
+## Anchor mode
+
+Transactions can be mined either in an anchor block or in a microblock. If microblock-anchoring is selected, the transaction can be confirmed much quicker that the target block time. However, microblocks can be subject to re-organization, thus changing the order of transaction processing. If your transaction relies on a state that could be altered by a previous transactions with serious implications, you should carefully evalute if microblock-anchoring should be set.
+
+The anchor mode has three options:
+
+- `OnChainOnly` The transaction MUST be included in an anchored block
+- `OffChainOnly`: The transaction MUST be included in a microblock
+- `Any`: The leader can choose where to include the transaction
+
+Here is an example where the transaction must be included in a microblock:
+
+```js
+import { AnchorMode, makeSTXTokenTransfer } from '@stacks/transactions';
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
+
+const BigNum = require('bn.js');
+
+const txOptions = {
+  recipient: 'SP3FGQ8Z7JY9BWYZ5WM53E0M9NK7WHJF0691NZ159',
+  amount: new BigNum(12345),
+  senderKey: 'b244296d5907de9864c0b0d51f98a13c52890be0404e83f273144cd5b9960eed01',
+  network: new StacksTestnet(), // for mainnet, use `StacksMainnet()`
+  anchorMode: AnchorMode.OffChainOnly, // must be included in a microblock
+};
+
+const transaction = await makeSTXTokenTransfer(txOptions);
+```
+
 ## Post-conditions
 
 Transaction post-conditions are a feature meant to limit the damage malicious smart contract developers and smart contract bugs can do in terms of destroying a user's assets. Post-conditions are executed whenever a contract is instantiated or a public method of an existing contract is executed. Whenever a post-condition fails, a transaction will be forced to abort.

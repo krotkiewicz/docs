@@ -28,6 +28,7 @@ description: Summary of technical specifications of Stacks 2.0
 - Reward maturity window: 100 blocks, meaning leaders will earn the coinbase reward 100 blocks after the block they successfully mine.
 - Block interval: Stacks blockchain produces blocks at the same rate as the underlying burnchain. For Bitcoin, this is approximately every 10 minutes.
 - BTC commitment: Miners must commit atleast 11,000 satoshis (5,500 sats / [UTXO output](https://learnmeabitcoin.com/technical/utxo)); 2 outputs / block) to avoid "dust".
+- Microblocks: Stacks uses a hybrid approach for block generation: it can "batch" transactions and it can "stream" them. When streamed, leaders may dynamically package transactions into a sequence of microblocks as they are received from users.
 - For more details, see [Mining](/understand-stacks/mining).
 
 ## Stacking
@@ -61,6 +62,7 @@ description: Summary of technical specifications of Stacks 2.0
   1. _originating account_ is the account that creates, _authorizes_ and sends the transaction
   2. _paying account_ is the account that is billed by the leader for the cost of validating and executing the transaction
   3. _sending account_ is the account that identifies who is currently executing the transaction: this can change as a transaction executes via the `as-contract` Clarity function
+- Transactions can be batched or streamed into blocks. The behavior can be controlled by the anchor mode of a transaction. With streaming (microblocks), a faster confirmation time is possible.
 - Two types of authorizations: standard authorization is where originating account is the same as paying account. _Sponsored_ authorization is where originating account and paying account are distinct. For instance, developers or service providers could pay for users to call their smart-contracts.
 - For sponsored authorization, first a user signs with the originating account and then a sponsor signs with the paying account.
 - Mempool limit for concurrent pending transactions is 25 per account
